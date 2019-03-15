@@ -119,10 +119,138 @@ def shellRank(data):
     return data
 
 
+def mergeSort(data):
+    """
+    归并排序是建立在归并操作上的一种有效的排序算法。该算法是采用分治法（Divide and Conquer）的一个非常典型的应用。将已有序的子序列合并，
+    得到完全有序的序列；即先使每个子序列有序，再使子序列段间有序。若将两个有序表合并成一个有序表，称为2-路归并。
+
+    把长度为n的输入序列分成两个长度为n/2的子序列；
+    对这两个子序列分别采用归并排序；
+    将两个排序好的子序列合并成一个最终的排序序列。
+
+    归并排序 时间复杂度 O(n*log(n)), 空间复杂度 O(n), 不稳定排序
+    :param data:
+    :return:
+    """
+    length = data.__len__()
+    if length < 2:
+        return data
+    middle = length/2
+    return merge(mergeSort(data[0:middle]), mergeSort((data[middle:])))
+
+
+def merge(left, right):
+    """
+    两个有序数组合并
+    :param left:
+    :param right:
+    :return:
+    """
+    res = []
+    l_len = left.__len__()
+    r_len = right.__len__()
+    i, j = 0, 0
+    while i < l_len and j < r_len:
+        if left[i] < right[j]:
+            res.append(left[i])
+            i += 1
+        else:
+            res.append(right[j])
+            j += 1
+    while i < l_len:
+        res.append(left[i])
+        i += 1
+    while j < r_len:
+        res.append(right[j])
+        j += 1
+    return res
+
+
+def quickSort(data, left, right):
+    """
+    快速排序的基本思想：通过一趟排序将待排记录分隔成独立的两部分，
+    其中一部分记录的关键字均比另一部分的关键字小，则可分别对这两部分记录继续进行排序，以达到整个序列有序。
+
+    从数列中挑出一个元素，称为 “基准”（pivot）；
+    重新排序数列，所有元素比基准值小的摆放在基准前面，所有元素比基准值大的摆在基准的后面（相同的数可以到任一边）。在这个分区退出之后，该基准就处于数列的中间位置。这个称为分区（partition）操作；
+    递归地（recursive）把小于基准值元素的子数列和大于基准值元素的子数列排序
+
+    快速排序 时间复杂度 O(n*log(n)), 空间复杂度 O(n*log(n)), 不稳定排序
+    :param data:
+    :return:
+    """
+    if left < right:
+        data, pivot = partition(data, left, right)
+        quickSort(data, left, pivot-1)
+        quickSort(data, pivot+1, right)
+    return data
+
+
+def partition(data, left, right):
+    """
+    列表
+    :param data:
+    :param left:
+    :param right:
+    :return:
+    """
+    pivot = left
+    index = left + 1
+    for i in range(left + 1, right):
+        if data[i] < data[pivot]:
+            data[i], data[index] = data[index], data[i]
+            index += 1
+    data[pivot],  data[index - 1] = data[index - 1], data[pivot]
+    return data, index - 1
+
+
+def heapSort(data):
+    """
+    堆排序（Heapsort）是指利用堆这种数据结构所设计的一种排序算法。堆积是一个近似完全二叉树的结构，
+    并同时满足堆积的性质：即子结点的键值或索引总是小于（或者大于）它的父节点。
+
+    将初始待排序关键字序列(R1,R2….Rn)构建成大顶堆，此堆为初始的无序区；
+    将堆顶元素R[1]与最后一个元素R[n]交换，此时得到新的无序区(R1,R2,……Rn-1)和新的有序区(Rn),且满足R[1,2…n-1]<=R[n]；
+    由于交换后新的堆顶R[1]可能违反堆的性质，因此需要对当前无序区(R1,R2,……Rn-1)调整为新堆，然后再次将R[1]与无序区最后一个元素交换，
+    得到新的无序区(R1,R2….Rn-2)和新的有序区(Rn-1,Rn)。不断重复此过程直到有序区的元素个数为n-1，则整个排序过程完成。
+
+    堆排序 时间复杂度 O(n*log(n)), 空间复杂度 O(1), 不稳定排序
+    :param data:
+    :return:
+    """
+    first = len(data)//2 - 1
+    for i in range(first, -1, -1):
+        sift_down(data, i, len(data)-1)
+
+    for ix in range(len(data)-1, 0, -1):
+        data[ix], data[0] = data[0], data[ix]
+        sift_down(data, i, ix - 1)
+
+    return data
+
+
+def sift_down(data, start, end):
+    while True:
+        left = 2 * start + 1
+        if left > end:
+            break
+
+        if left + 1 < end and data[left+1] > data[left]:
+            left += 1
+        if data[left] > data[start]:
+            data[left], data[start] = data[start], data[left]
+            start = left
+        else:
+            break
+
+
 if __name__ == "__main__":
     data = [1,3,4,2,8,6,5,3]
     # print bubbleRank(data)
     # print selectorRank(data)
     # print insertRank(data)
-    print shellRank(data)
+    # print shellRank(data)
+    # print mergeSort(data)
+    # print quickSort(data, 0, data.__len__())
+    print heapSort(data)
     pass
